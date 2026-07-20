@@ -1,0 +1,94 @@
+name: Update Featured Repos
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-featured-repos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch org repos and rank them
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api orgs/bronto-community/repos \
+            --paginate \
+            --jq '[.[] | select(.archived == false and .fork == false and .name != ".github") | {
+              name: .name,
+              description: .description,
+              url: .html_url,
+              stars: .stargazers_count,
+              forks: .forks_count,
+              watchers: .watchers_count,
+              pushed_at: .pushed_at
+            }]' | jq -s 'add // []' > /tmp/repos.json
+
+          cat /tmp/repos.json
+
+      - name: Update profile/README.md
+        run: |
+          python3 << 'EOF'
+          import json, datetime, re, sys
+
+          with open('/tmp/repos.json') as f:
+              repos = json.load(f)
+
+          if not repos:
+              print("No repos found, skipping update.")
+              sys.exit(0)
+
+          now = datetime.datetime.now(datetime.timezone.utc)
+
+          def score(repo):
+              stars = repo['stars']
+              forks = repo['forks']
+              pushed = datetime.datetime.fromisoformat(repo['pushed_at'].replace('Z', '+00:00'))
+              days_since_push = (now - pushed).days
+              # Stars and forks are strong signals; recency keeps stale repos from dominating
+              recency = max(0, 365 - days_since_push)
+              return stars * 10 + forks * 3 + recency
+
+          repos.sort(key=score, reverse=True)
+          top = repos[:10]
+
+          rows = ['| Project | What it does |', '|---|---|']
+          for r in top:
+              desc = (r['description'] or '_No description_').replace('|', '\\|')
+              rows.append(f"| [{r['name']}]({r['url']}) | {desc} |")
+
+          table = '\n'.join(rows)
+
+          with open('profile/README.md') as f:
+              content = f.read()
+
+          new_content = re.sub(
+              r'<!-- FEATURED-REPOS-START -->.*?<!-- FEATURED-REPOS-END -->',
+              f'<!-- FEATURED-REPOS-START -->\n\n{table}\n\n<!-- FEATURED-REPOS-END -->',
+              content,
+              flags=re.DOTALL,
+          )
+
+          if new_content == content:
+              print("No changes detected.")
+          else:
+              with open('profile/README.md', 'w') as f:
+                  f.write(new_content)
+              print(f"Updated featured repos with {len(top)} projects.")
+          EOF
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git diff --quiet && echo "Nothing to commit." || (
+            git add profile/README.md
+            git commit -m 'chore: update featured repos [skip ci]'
+            git push
+          )
