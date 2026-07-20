@@ -1,5 +1,10 @@
 name: Update Featured Repos
 
+# Prereqs: create a GitHub App in the org with "Contents: Read & write" on this
+# repo, then add these two org/repo secrets:
+#   APP_ID          — the numeric App ID (Settings → Developer settings → GitHub Apps)
+#   APP_PRIVATE_KEY — the PEM private key generated for the app
+
 on:
   schedule:
     - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
@@ -9,14 +14,24 @@ jobs:
   update-featured-repos:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read  # GITHUB_TOKEN is not used for push; the App token handles that
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: Fetch org repos and rank them
+      - uses: actions/checkout@v4
+        with:
+          # Checkout via the App token so git push is authenticated automatically
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Fetch and rank org repos
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh api orgs/bronto-community/repos \
             --paginate \
@@ -26,69 +41,17 @@ jobs:
               url: .html_url,
               stars: .stargazers_count,
               forks: .forks_count,
-              watchers: .watchers_count,
               pushed_at: .pushed_at
-            }]' | jq -s 'add // []' > /tmp/repos.json
-
-          cat /tmp/repos.json
-
-      - name: Update profile/README.md
-        run: |
-          python3 << 'EOF'
-          import json, datetime, re, sys
-
-          with open('/tmp/repos.json') as f:
-              repos = json.load(f)
-
-          if not repos:
-              print("No repos found, skipping update.")
-              sys.exit(0)
-
-          now = datetime.datetime.now(datetime.timezone.utc)
-
-          def score(repo):
-              stars = repo['stars']
-              forks = repo['forks']
-              pushed = datetime.datetime.fromisoformat(repo['pushed_at'].replace('Z', '+00:00'))
-              days_since_push = (now - pushed).days
-              # Stars and forks are strong signals; recency keeps stale repos from dominating
-              recency = max(0, 365 - days_since_push)
-              return stars * 10 + forks * 3 + recency
-
-          repos.sort(key=score, reverse=True)
-          top = repos[:10]
-
-          rows = ['| Project | What it does |', '|---|---|']
-          for r in top:
-              desc = (r['description'] or '_No description_').replace('|', '\\|')
-              rows.append(f"| [{r['name']}]({r['url']}) | {desc} |")
-
-          table = '\n'.join(rows)
-
-          with open('profile/README.md') as f:
-              content = f.read()
-
-          new_content = re.sub(
-              r'<!-- FEATURED-REPOS-START -->.*?<!-- FEATURED-REPOS-END -->',
-              f'<!-- FEATURED-REPOS-START -->\n\n{table}\n\n<!-- FEATURED-REPOS-END -->',
-              content,
-              flags=re.DOTALL,
-          )
-
-          if new_content == content:
-              print("No changes detected.")
-          else:
-              with open('profile/README.md', 'w') as f:
-                  f.write(new_content)
-              print(f"Updated featured repos with {len(top)} projects.")
-          EOF
+            }]' \
+            | jq -s 'add // []' \
+            | python3 scripts/update_featured_repos.py
 
       - name: Commit and push if changed
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git config user.name 'bronto-community-bot[bot]'
+          git config user.email '${{ secrets.APP_ID }}+bronto-community-bot[bot]@users.noreply.github.com'
           git diff --quiet && echo "Nothing to commit." || (
             git add profile/README.md
-            git commit -m 'chore: update featured repos [skip ci]'
+            git commit -m 'chore: update featured repos'
             git push
           )
