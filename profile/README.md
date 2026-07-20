@@ -23,11 +23,14 @@ This org is intentionally broad. Projects range from polished tools to weekend e
 
 ## ⭐ Featured projects
 
+<!-- FEATURED-REPOS-START -->
+
 | Project | What it does |
 |---|---|
 | [events-helper](https://github.com/bronto-community/events-helper) | AI agent that tracks tech-conference CfPs & events, matches them to team and personal interests, files them into Jira, and posts digests & alerts to Slack |
 
-*More on the way — watch this space.*
+<!-- FEATURED-REPOS-END -->
+
 
 ## 🤝 Contributing
 
