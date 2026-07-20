@@ -31,7 +31,6 @@ This org is intentionally broad. Projects range from polished tools to weekend e
 
 <!-- FEATURED-REPOS-END -->
 
-*Updated automatically every week. Ranked by stars and recent activity.*
 
 ## 🤝 Contributing
 
