@@ -16,6 +16,9 @@ jobs:
     permissions:
       contents: read  # GITHUB_TOKEN is not used for push; the App token handles that
 
+    env:
+      UPDATE_BRANCH: automated/update-featured-repos
+
     steps:
       - name: Generate GitHub App token
         id: app-token
@@ -46,12 +49,33 @@ jobs:
             | jq -s 'add // []' \
             | python3 scripts/update_featured_repos.py
 
-      - name: Commit and push if changed
+      - name: Open or update PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
+          if git diff --quiet; then
+            echo "No changes — nothing to PR."
+            exit 0
+          fi
+
           git config user.name 'bronto-community-bot[bot]'
           git config user.email '${{ secrets.BRONTO_COMMUNITY_BOT_APP_ID }}+bronto-community-bot[bot]@users.noreply.github.com'
-          git diff --quiet && echo "Nothing to commit." || (
-            git add profile/README.md
-            git commit -m 'chore: update featured repos'
-            git push
-          )
+
+          git checkout -b "$UPDATE_BRANCH"
+          git add profile/README.md
+          git commit -m 'chore: update featured repos'
+          git push --force origin "$UPDATE_BRANCH"
+
+          # Create the PR only if one isn't already open.
+          # A force-push to the same branch updates the existing PR in place,
+          # so there is never more than one open PR from this automation.
+          OPEN=$(gh pr list --head "$UPDATE_BRANCH" --state open --json number --jq 'length')
+          if [ "$OPEN" -eq 0 ]; then
+            gh pr create \
+              --title "chore: update featured repos" \
+              --body "Weekly automated update of the featured projects table in \`profile/README.md\`. Ranked by stars, forks, and recent push activity." \
+              --base main \
+              --head "$UPDATE_BRANCH"
+          else
+            echo "PR already open — updated in place via force-push."
+          fi
