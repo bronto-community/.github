@@ -27,15 +27,15 @@ This org is intentionally broad. Projects range from polished tools to weekend e
 
 | Project | What it does |
 |---|---|
-| [observability-on-board](https://github.com/bronto-community/observability-on-board) | _No description_ |
+| [compy](https://github.com/bronto-community/compy) | Local OpenTelemetry Collector manager for the dev loop on macOS: one stable OTLP endpoint, switchable configurations and backends, driven from a CLI, web UI, or the menu bar |
+| [ai-observatory-lab](https://github.com/bronto-community/ai-observatory-lab) | Self-paced labs from the AWS + Bronto 'AI Observatory' evening: observe an AI agent with OpenTelemetry GenAI traces in Bronto, then build an AI SRE. Code for the site at ai-observatory-lab.vercel.app. |
 | [bronto-cli](https://github.com/bronto-community/bronto-cli) | A community command-line client for the Bronto observability platform. It wraps Bronto's REST and ingestion APIs in a single scriptable binary: search and tail logs, explore OpenTelemetry traces, send events, and manage resources (datasets, monitors, dashboards, parsers, exports, API keys) |
-| [gentoo-otel-go](https://github.com/bronto-community/gentoo-otel-go) | _No description_ |
-| [ai-sre-talk](https://github.com/bronto-community/ai-sre-talk) | Slides for the talk "Reliability from Manual to Autopilot" |
-| [bronto-cloudwatch-metrics](https://github.com/bronto-community/bronto-cloudwatch-metrics) | Deploy filtered CloudWatch Metric Streams to Bronto across AWS accounts and Regions |
-| [v0-BrontoVibe](https://github.com/bronto-community/v0-BrontoVibe) | A modern log exploration and observability dashboard for Bronto, built with Next.js 15 and designed for the Vercel platform. |
+| [observability-on-board](https://github.com/bronto-community/observability-on-board) | The Observability on Board video series, in copy-pasteable form: switching on the OpenTelemetry support tools already ship, using the configuration surfaces they already have. |
+| [bronto-sdk-python](https://github.com/bronto-community/bronto-sdk-python) | Python SDK for the Bronto observability platform — typed sync and async REST clients, domain helpers, and an MCP endpoint registry |
+| [bronto-alert-investigation-agent](https://github.com/bronto-community/bronto-alert-investigation-agent) | A logs-based alert investigation agent for Bronto, built with LangGraph |
+| [mongodb-dublin-lab](https://github.com/bronto-community/mongodb-dublin-lab) | Bronto × MongoDB Dublin: AI Observability & Monitoring talk, AI SRE lab and Atlas incident harness |
+| [storefront-mongo](https://github.com/bronto-community/storefront-mongo) | The four services behind the shop, on MongoDB Atlas. |
 | [homebrew-tap](https://github.com/bronto-community/homebrew-tap) | Homebrew tap for bronto-cli |
-| [events-helper](https://github.com/bronto-community/events-helper) | AI agent that tracks tech-conference CfPs & events, matches them to team/personal interests, files them into Jira, and posts digests/alerts to Slack. Built on eve. |
-| [bronto-grafana-datasource](https://github.com/bronto-community/bronto-grafana-datasource) | A Grafana data source plugin for querying and visualizing Bronto logs directly in Grafana dashboards and Explore. |
 | [bronto-aws-savings-report](https://github.com/bronto-community/bronto-aws-savings-report) | Audit AWS observability spend and project apples-to-apples savings on Bronto.io. Walks the org, attributes S3 log sinks, optionally probes OpenSearch / VPC Flow Logs / AMP per account/region with --probe. Deepest analysis tier — pair with PROMPT.md in the sibling repo for LLM-driven follow-up. |
 
 <!-- FEATURED-REPOS-END -->
