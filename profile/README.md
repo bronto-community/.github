@@ -28,15 +28,15 @@ This org is intentionally broad. Projects range from polished tools to weekend e
 | Project | What it does |
 |---|---|
 | [compy](https://github.com/bronto-community/compy) | Local OpenTelemetry Collector manager for the dev loop on macOS: one stable OTLP endpoint, switchable configurations and backends, driven from a CLI, web UI, or the menu bar |
-| [ai-observatory-lab](https://github.com/bronto-community/ai-observatory-lab) | Self-paced labs from the AWS + Bronto 'AI Observatory' evening: observe an AI agent with OpenTelemetry GenAI traces in Bronto, then build an AI SRE. Code for the site at ai-observatory-lab.vercel.app. |
 | [bronto-cli](https://github.com/bronto-community/bronto-cli) | A community command-line client for the Bronto observability platform. It wraps Bronto's REST and ingestion APIs in a single scriptable binary: search and tail logs, explore OpenTelemetry traces, send events, and manage resources (datasets, monitors, dashboards, parsers, exports, API keys) |
 | [observability-on-board](https://github.com/bronto-community/observability-on-board) | The Observability on Board video series, in copy-pasteable form: switching on the OpenTelemetry support tools already ship, using the configuration surfaces they already have. |
+| [ai-observatory-lab](https://github.com/bronto-community/ai-observatory-lab) | Self-paced labs from the AWS + Bronto 'AI Observatory' evening: observe an AI agent with OpenTelemetry GenAI traces in Bronto, then build an AI SRE. Code for the site at ai-observatory-lab.vercel.app. |
 | [bronto-sdk-python](https://github.com/bronto-community/bronto-sdk-python) | Python SDK for the Bronto observability platform — typed sync and async REST clients, domain helpers, and an MCP endpoint registry |
 | [bronto-alert-investigation-agent](https://github.com/bronto-community/bronto-alert-investigation-agent) | A logs-based alert investigation agent for Bronto, built with LangGraph |
-| [mongodb-dublin-lab](https://github.com/bronto-community/mongodb-dublin-lab) | Bronto × MongoDB Dublin: AI Observability & Monitoring talk, AI SRE lab and Atlas incident harness |
-| [storefront-mongo](https://github.com/bronto-community/storefront-mongo) | The four services behind the shop, on MongoDB Atlas. |
+| [petclinic-agent](https://github.com/bronto-community/petclinic-agent) | A booking agent on Vercel (eve) for Spring PetClinic on AWS Lightsail, traced end to end with OpenTelemetry and Bronto |
 | [homebrew-tap](https://github.com/bronto-community/homebrew-tap) | Homebrew tap for bronto-cli |
-| [bronto-aws-savings-report](https://github.com/bronto-community/bronto-aws-savings-report) | Audit AWS observability spend and project apples-to-apples savings on Bronto.io. Walks the org, attributes S3 log sinks, optionally probes OpenSearch / VPC Flow Logs / AMP per account/region with --probe. Deepest analysis tier — pair with PROMPT.md in the sibling repo for LLM-driven follow-up. |
+| [scoop-bucket](https://github.com/bronto-community/scoop-bucket) | Scoop bucket for bronto-community CLIs |
+| [setup-bronto-cli](https://github.com/bronto-community/setup-bronto-cli) | GitHub Action that installs and verifies the bronto CLI |
 
 <!-- FEATURED-REPOS-END -->
 
